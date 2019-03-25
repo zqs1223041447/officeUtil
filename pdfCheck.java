@@ -11,17 +11,18 @@ public static boolean check(String file) {
             PdfReader reader = new PdfReader(file);  
             n = reader.getNumberOfPages();  
             if (n != 0)  
-                flag1 = true;  
-            document.close();  
+                flag1 = true;              
         } catch (IOException e) {  
             e.printStackTrace();  
            
-        }  
+        }finally{
+			document.close();
+		}
         return flag1;  
     }  
 	
 //检查PDF文件是否有文字内容并输出。如果只含有图片则返回空
-public static String getTxt(String filePath) throws Exception {
+public static String hasText(String filePath) throws Exception {
 		String ts = "";
 		File f = new File(filePath);
 		if (!f.exists()) {
@@ -33,16 +34,18 @@ public static String getTxt(String filePath) throws Exception {
 			OutputStreamWriter writer = new OutputStreamWriter(out);
 			PDFTextStripper stripper = new PDFTextStripper();
 			stripper.writeText(pdfdocument, writer);
-			pdfdocument.close();
-			out.close();
-			writer.close();
 			byte[] contents = out.toByteArray();
 			ts = new String(contents);
 			// System.out.println(f.getName() + "length is:" + contents.length
 			// + "\n");
 		} catch (Exception e) {
 			e.printStackTrace();
-		} // finally {
-		return ts;
-		// }
+		}  finally {
+			if (pdfdocument!=null) {
+				pdfdocument.close();
+				out.close();
+				writer.close();
+			}
+			return ts;
+		}
 	}
